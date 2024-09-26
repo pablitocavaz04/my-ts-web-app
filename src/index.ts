@@ -5,42 +5,58 @@
 /*                                                  |;                 :;   ;:     */
 /*   By: Pablo Camino Vázquez                      |;                  :;  ;:      */
 /*                                                |;                   :; ;:       */
-/*   Created: 2024/09/25 17:53                   |::::::::::::   :+:   ;;;         */
-/*   Updated: 2024/09/25 17:53                                              */
+/*   Created: 2024-09-26                          |::::::::::::   :+:   ;;;         */
+/*   Updated: 2024-09-26                                      */
 /*                                                                                 */
 /* ******************************************************************************* */
 function greet(name: string): void {
-    const greeting = `Hello, ${name}!`;
-    const element = document.getElementById("greeting");
-    if (element) {
-        element.innerText = greeting;
-    }
+  const greeting = `Hello, ${name}!`;
+  const element = document.getElementById("greeting");
+  if (element) {
+      element.innerText = greeting;
+  }
 }
 
 greet("World");
 
-// Lógica para el input y el botón
-const inputElement = document.getElementById('messageInput') as HTMLInputElement;
-const buttonElement = document.getElementById('submitButton');
+
+document.addEventListener('DOMContentLoaded', () => {
+
+const submitButton = document.getElementById('submitButton') as HTMLButtonElement;
+const messageInput = document.getElementById('messageInput') as HTMLInputElement;
 const cardContainer = document.getElementById('cardContainer');
 
-if (buttonElement && inputElement && cardContainer) {
-  buttonElement.addEventListener('click', () => {
-    const message = inputElement.value?.toString().trim();
-    if (message) {
-      // Crear una carta con el mensaje
-      const card = document.createElement('ion-card');
-      const cardContent = document.createElement('ion-card-content');
-      cardContent.textContent = message;
-      card.appendChild(cardContent);
 
-      // Añadir la carta al contenedor
-      cardContainer.appendChild(card);
+function enviarMensaje(mensaje: string): Promise<string> {
+  return new Promise((resolve, reject) => {
 
-      // Limpiar el input después de enviar
-      inputElement.value = '';
-    }
+    setTimeout(() => {
+      if (Math.random()<0.2) {
+        resolve(`${mensaje}`);
+      } else {
+        reject('Ha ocurrido un error inesperado');
+      }
+    }, 1000);
   });
 }
 
+submitButton.addEventListener('click', () => {
 
+  const mensaje = messageInput.value as string;
+  if( !mensaje || mensaje=="")
+    alert("El mensaje no puede estar vacío");
+  else
+    enviarMensaje(mensaje)
+      .then((respuesta) => {
+    
+        const newCard = document.createElement('ion-card');
+        newCard.innerHTML = `<ion-card-content>${respuesta}</ion-card-content>`;
+        cardContainer?.appendChild(newCard);
+
+        messageInput.value = '';
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    });
+});
